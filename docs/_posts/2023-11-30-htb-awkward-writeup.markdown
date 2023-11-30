@@ -89,11 +89,11 @@ Password: chris123
 
 This did not allow me to simply SSH in, but I was able to log in to the HR portal I found earlier:
 
-![image](/assets/images/awkward/awkward10.png){:height="50%" width="50%"}
+![image](/assets/images/awkward/awkward10.png){:height="70%" width="70%"}
 
 Playing around with the functionality while capturing requests with Burp, I found a JWT when using the status refresh functionality.
 
-![image](/assets/images/awkward/awkward11.png){:height="50%" width="50%"}
+![image](/assets/images/awkward/awkward11.png){:height="70%" width="70%"}
 
 I was able to successfully crack this (and this time, hashcat was cooperating - I suspect I had just been fatigued when formatting the sha256 hash earlier):
 
@@ -135,6 +135,7 @@ At this time, I hadn't set all my Burp plugins back up, so decided to create the
 ```
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ii8nIC9ldGMvcGFzc3dkICciLCJpYXQiOjE1MTYyMzkwMjJ9.P8Xa-exYSL2gWWnTE2I2pZsesofPuzQaPrvjvj3uzpU
 ```
+
 
 ![image](/assets/images/awkward/awkward18.png){:height="70%" width="70%"}
 
@@ -197,7 +198,7 @@ Username: admin
 Password: 014mrbeanrules!#P
 ```
 
-![image](/assets/images/awkward/awkward28.png){:height="50%" width="50%"}
+![image](/assets/images/awkward/awkward28.png){:height="70%" width="70%"}
 
 Since I had a shell on the webserver, I decided to see if I could read the server-side files for the store on top of the client-side source, and I could. 
 
@@ -269,7 +270,7 @@ echo '" --exec="\!/tmp/uwu.sh"' >> leave_requests.csv
 
 Back in the shell as `bean`, I successfully obtained root.
 
-![image](/assets/images/awkward/awkward37.png){:height="50%" width="50%"}
+![image](/assets/images/awkward/awkward37.png){:height="70%" width="70%"}
 
 
 
