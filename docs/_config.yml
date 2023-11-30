@@ -40,6 +40,7 @@ remote_theme: b2a3e8/jekyll-theme-console
 header_pages:
   - index.md
   - about.md
+  - post_categories.md
 
 style: dark
 listen_for_clients_preffered_style: true
