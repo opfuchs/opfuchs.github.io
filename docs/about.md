@@ -4,15 +4,8 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+I'm OPFUCHS, yet another infosec furry. I'm a red fox who fittingly enough specializes in red (and blue) security operations, as well as open-ended security research that strikes my fancy. I specialize in doing cybersecurity for financial services, and am currently a graduate student at SANS. 
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+Most of the posts here will probably be about infosec or infosec-adjacent, but I'll ultimately write about what strikes my fancy, which can sometimes include furry stuff, philosophy, and various other things. 
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
-
-
-[jekyll-organization]: https://github.com/jekyll
+You can find my on Bluesky @opfuchs.gay
