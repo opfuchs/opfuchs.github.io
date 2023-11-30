@@ -31,7 +31,7 @@ I also decided to fuzz for content, and subdomains and vhosts, finding `store.ha
 
 ![image](/assets/images/awkward/awkward4.png)
 
-Browsing through the homepage source, I found a reference to a JavaScript file `app.js`. Both the name and the fact this was a nonstandard name caught my eye. Indeed, I found application source code:
+Browsing through the homepage source, I found a reference to a JavaScript file `app.js`. Both the name and the fact this was nonstandard caught my eye. Indeed, I found application source code:
 
 ![image](/assets/images/awkward/awkward5.png)
 
