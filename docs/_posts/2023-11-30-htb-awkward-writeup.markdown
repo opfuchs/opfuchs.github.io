@@ -1,4 +1,5 @@
 ---
+layout: post
 title:  "HTB - Awkward Writeup"
 date:   2023-11-30 16:45:01 -0500
 categories: Writeups
