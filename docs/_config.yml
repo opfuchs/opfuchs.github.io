@@ -29,12 +29,11 @@ twitter_username: jekyllrb
 github_username:  jekyll
 
 # Build settings
-# theme: minima
+theme: null
 plugins:
   - jekyll-feed
-  - jekyll-remote-theme
 
-remote_theme: jekyll/minima
+    # remote_theme: jekyll/minima
 
 
 # Minima-specific settings
