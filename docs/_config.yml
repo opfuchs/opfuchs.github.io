@@ -35,7 +35,7 @@ plugins:
   - jekyll-feed
   - jekyll-remote-theme
 
-remote_theme: jekyll/minima
+remote_theme: b2a3e8/jekyll-theme-console
 
 
 # Minima-specific settings
