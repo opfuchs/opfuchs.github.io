@@ -8,4 +8,4 @@ I'm OPFUCHS, yet another infosec furry. I'm a red fox who fittingly enough speci
 
 Most of the posts here will probably be about infosec or infosec-adjacent, but I'll ultimately write about what strikes my fancy, which can sometimes include furry stuff, philosophy, and various other things. 
 
-You can find my on Bluesky @opfuchs.gay
+You can find me on Bluesky @opfuchs.gay
