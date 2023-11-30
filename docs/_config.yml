@@ -34,16 +34,17 @@ markdown: kramdown
 plugins:
   - jekyll-feed
   - jekyll-remote-theme
+  - jekyll-include-cache
 
-remote_theme: b2a3e8/jekyll-theme-console
+remote_theme: "mmistakes/minimal-mistakes@4.24.0"
 
 header_pages:
   - index.md
   - about.md
   - post_categories.md
 
-style: dark
-listen_for_clients_preffered_style: true
+# style: dark
+# listen_for_clients_preffered_style: true
 
 # Minima-specific settings
 # minima:

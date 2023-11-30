@@ -14,7 +14,6 @@ I did the box a long time again, and am only now transforming my notes into a mo
 Please also note that the target IP changes a couple times, as I had to revert the machine once due to technical difficulties, and later had to come back to it after a break.
 
 ## Recon and Initial Access 
-&nbsp;
 
 First, I performed some basic `nmap` scans. Using `sudo nmap -sC -sV -Pn 10.129.228.81`, I found SSH and a web server:
 
@@ -52,6 +51,7 @@ curl -s http://hat-valley.htb/js.app.js | grep routes | sed 's/path:/\n/g' | gre
 /dashboard
 /leave
 ```
+&nbsp;
 
 First, I examined `/hr` and found a login page, but was unable to do anything with it immediately. I opted to shelve the rest for the time being in order to ensure I had comprehensively analyzed `app.js`, and I found API endpoints. Once again, knowing the format, I used an ugly command to parse out all the API endpoints referenced in the file:
 
@@ -70,6 +70,8 @@ login
 staff-details
 store-status
 ```
+&nbsp;
+&nbsp;
 
 It appeared that one could:
 
@@ -78,7 +80,7 @@ It appeared that one could:
 3. Examine staff and 
 4. Interact with the store 
 &nbsp;
-
+&nbsp;
 
 via the API. I immediately tested `staff-details` as it might have contained credentials. Lo and behold, I was able to get a variety of user details, including usernames, SHA256-hashed passwords, real names, company roles, and phone numbers.
 
@@ -92,7 +94,6 @@ I decided to attempt to crack the hashes using `john` in the interest of time, a
 Username: christopher.jones
 Password: chris123
 ```
-&nbsp;
 
 
 This did not allow me to simply SSH in, but I was able to log in to the HR portal I found earlier:
@@ -110,7 +111,6 @@ I was able to successfully crack this (and this time, hashcat was cooperating - 
 ```
 123beany123
 ```
-&nbsp;
 
 
 This was likely a password, given both the format and the purpose of the JWT in the request. Having unsuccessfully attempted small manual password sprays for both the HR portal and SSH (i.e., all known usernames with this password), I then decided to see if this token could be used to interact with the API. First, I tested `store-status` and noticed that I could make localhost port 80 the value of the `url` parameter and successfully request the homepage, indicating a Server-Side Request Forgery (SSRF) vulnerability:
@@ -131,7 +131,6 @@ ffuf -w /usr/share/seclists/Fuzzing/4-digits-0000-9999.txt -u 'http://hat-valley
 3002
 8080
 ```
-&nbsp;
 
 
 First, I examined 3002, rendering in Burp, and discovered the internal API documentation.
@@ -161,21 +160,17 @@ Going through the list, I found more regular users other than root:
 bean
 christine
 ```
-&nbsp;
-
 
 At this point, although I was skeptical I decided to see if I could simply read the `user.txt`, taking the educated guess that it was either in `bean` or `christine`'s home directory. Unsurprisingly, this didn't work. I therefore decided to use the `123beany123` password to SSH into these two users, but was unsuccessful. Given the password, it was therefore safe to assume for the time being that this was only `bean`'s API/HR password. However, in the process of using the file read to enumerate the users' home directories, I discovered a gzip backup of some sort in `bean`'s homedir, and successfully attempted to download it with `curl` using the JWT I crafted:
 
 ```
 curl http://hat-valley.htb/api/all-leave --header "Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ii8nIC9ob21lL2JlYW4vRG9jdW1lbnRzL2JhY2t1cC9iZWFuX2JhY2t1cF9maW5hbC50YXIuZ3ogJyIsImlhdCI6MTUxNjIzOTAyMn0.y7_OwRtuzV8lCTwYe1Ac1t2nG50wjK38MeajRYAKAuM" --output bean_backup_final.tar.gz
 ```
-&nbsp;
 
 
 ![image](/assets/images/awkward/awkward20.png)
 
 ## bean's backup and the user flag
-&nbsp;
 
 
 The backup I downloaded earlier appears to be a full backup of `bean`'s home directory from an earlier time:
