@@ -30,11 +30,12 @@ github_username:  opfuchs
 
 # Build settings
 markdown: kramdown
-theme: minima
+# theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-remote-theme
 
-    # remote_theme: jekyll/minima
+remote_theme: jekyll/minima
 
 
 # Minima-specific settings
