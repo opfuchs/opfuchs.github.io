@@ -25,7 +25,7 @@ Running an initial `curl`, I found a domain `hat-valley.htb`:
 
 Having added this to our hosts, I proceeded to examine the website:
 
-![image](/assets/images/awkward/awkward3.png)
+![image](/assets/images/awkward/awkward3.png){:height="80%" width="80%"}
 
 I also decided to fuzz for content, and subdomains and vhosts, finding `store.hat-valley.htb` as well. Browsing to this, I was presented with an HTTP authentication prompt, and put it aside for the time being.
 
@@ -33,7 +33,7 @@ I also decided to fuzz for content, and subdomains and vhosts, finding `store.ha
 
 Browsing through the homepage source, I found a reference to a JavaScript file `app.js`. Both the name and the fact this was a nonstandard name caught my eye. Indeed, I found application source code:
 
-![image](/assets/images/awkward/awkward5.png)
+![image](/assets/images/awkward/awkward5.png){:height="80%" width="80%"}
 
 Manually skimming through this gave me a sense of the format, and I able to find some routes, made easier by the following admittedly ugly command:
 
@@ -89,11 +89,11 @@ Password: chris123
 
 This did not allow me to simply SSH in, but I was able to log in to the HR portal I found earlier:
 
-![image](/assets/images/awkward/awkward10.png)
+![image](/assets/images/awkward/awkward10.png){:height="50%" width="50%"}
 
 Playing around with the functionality while capturing requests with Burp, I found a JWT when using the status refresh functionality.
 
-![image](/assets/images/awkward/awkward11.png)
+![image](/assets/images/awkward/awkward11.png){:height="50%" width="50%"}
 
 I was able to successfully crack this (and this time, hashcat was cooperating - I suspect I had just been fatigued when formatting the sha256 hash earlier):
 
@@ -105,7 +105,7 @@ I was able to successfully crack this (and this time, hashcat was cooperating - 
 
 This was likely a password, given both the format and the purpose of the JWT in the request. Having unsuccessfully attempted small manual password sprays for both the HR portal and SSH (i.e., all known usernames with this password), I then decided to see if this token could be used to interact with the API. First, I tested `store-status` and noticed that I could make localhost port 80 the value of the `url` parameter and successfully request the homepage, indicating a Server-Side Request Forgery (SSRF) vulnerability:
 
-![image](/assets/images/awkward/awkward13.png)
+![image](/assets/images/awkward/awkward13.png){:height="70%" width="70%"}
 
 Given the SSRF, I decided to see if there were any resources I could only access "internally" by abusing it. Beginning by fuzzing port numbers (initially, 0-9999) I found two previously-unknown ports.
 
@@ -130,13 +130,13 @@ The `login` endpoint requires a username and password. Given that I had a token,
 
 At this time, I hadn't set all my Burp plugins back up, so decided to create the payload using the `jwt.io` web service, successfully reading `/etc/passwd`
 
-![image](/assets/images/awkward/awkward17.png)
+![image](/assets/images/awkward/awkward17.png){:height="70%" width="70%"}
 
 ```
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ii8nIC9ldGMvcGFzc3dkICciLCJpYXQiOjE1MTYyMzkwMjJ9.P8Xa-exYSL2gWWnTE2I2pZsesofPuzQaPrvjvj3uzpU
 ```
 
-![image](/assets/images/awkward/awkward18.png)
+![image](/assets/images/awkward/awkward18.png){:height="70%" width="70%"}
 
 Going through the list, I found more regular users other than root:
 
@@ -153,7 +153,7 @@ At this point, although I was skeptical I decided to see if I could simply read 
 curl http://hat-valley.htb/api/all-leave --header "Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ii8nIC9ob21lL2JlYW4vRG9jdW1lbnRzL2JhY2t1cC9iZWFuX2JhY2t1cF9maW5hbC50YXIuZ3ogJyIsImlhdCI6MTUxNjIzOTAyMn0.y7_OwRtuzV8lCTwYe1Ac1t2nG50wjK38MeajRYAKAuM" --output bean_backup_final.tar.gz
 ```
 
-![image](/assets/images/awkward/awkward20.png)
+![image](/assets/images/awkward/awkward20.png){:height="60%" width="60%"}
 
 ## bean's backup and the user flag
 
@@ -197,7 +197,7 @@ Username: admin
 Password: 014mrbeanrules!#P
 ```
 
-![image](/assets/images/awkward/awkward28.png)
+![image](/assets/images/awkward/awkward28.png){:height="50%" width="50%"}
 
 Since I had a shell on the webserver, I decided to see if I could read the server-side files for the store on top of the client-side source, and I could. 
 
@@ -269,7 +269,7 @@ echo '" --exec="\!/tmp/uwu.sh"' >> leave_requests.csv
 
 Back in the shell as `bean`, I successfully obtained root.
 
-![image](/assets/images/awkward/awkward37.png)
+![image](/assets/images/awkward/awkward37.png){:height="50%" width="50%"}
 
 
 
