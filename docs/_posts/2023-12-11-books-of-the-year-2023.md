@@ -46,7 +46,7 @@ Note that I chose the phrasing above very deliberately: These are not my favorit
 * Martin Schulze Wessel - *Der Fluch des Imperiums. Die Ukraine, Polen und der Irrweg in der russischen Geschichte*
 * Fredrik Westerlund - *Heidegger and the Problem of Phenomena*
 * Edward B. Westermann - *Hitler's Police Battalions: Enforcing Racial War in the East*
-* Marl Wilson - *Imitation of Rigor: An Alternative History of Analytic Philosophy*
+* Mark Wilson - *Imitation of Rigor: An Alternative History of Analytic Philosophy*
 * Peter H. Wilson - *Iron and Blood: A Military History of the German-Speaking Peoples since 1500*
 * Patrick Wotling - *Nietzsche et le problème de la civilisation*
 * Zuka Zak - *Polska: New Polish Cooking*
