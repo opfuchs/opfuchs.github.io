@@ -9,7 +9,7 @@ categories: Books
 
 While the year is not technically over, it's "books of the year" season for many publications. After several years of circulating such lists with friends in private, I decided to get in on the action a bit more publicly this year.
 
-Note that I chose the phrasing above very deliberately: These are not my favorite books that *came out* in 2023 (I don't think I read many of those), but rather my favorite books that I read - for the first time (not counting rereads here, I tend to reread my favorites a lot) - in 2023. 
+Note that I chose the phrasing above very deliberately: These are not my favorite books that *came out* in 2023 (although some did), but rather my favorite books that I read - for the first time (not counting rereads here) - in 2023. 
 
 * Hans Albert - *Kritik der reinen Hermeneutik. Der Antirealismus und das Problem des Verstehens*
 * Ti Alkire and Carol Rosen - *Romance Languages: A Historical Introduction*
